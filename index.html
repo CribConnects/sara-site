@@ -689,7 +689,7 @@ function TitleBar({
       fontSize: 11.5,
       color: C.faint
     }
-  }, "Beste bank in Nederland workspace")), /*#__PURE__*/React.createElement("div", {
+  }, "Cribbr workspace")), /*#__PURE__*/React.createElement("div", {
     style: {
       flex: 1
     }
@@ -3267,6 +3267,12 @@ const AGENT_LIB = [{
   state: "sandbox",
   fresh: true
 }, {
+  name: "Mortgage Process Copilot",
+  desc: "Serves the right process step per dossier; pauses for human sign-off at authorisation.",
+  env: "Copilot Studio · M365 tenant",
+  runs: "Per dossier",
+  state: "live"
+}, {
   name: "Company B Knowledge Copilot",
   desc: "Answers risk-policy questions for Company B RM",
   env: "Azure · client tenant",
@@ -3275,7 +3281,7 @@ const AGENT_LIB = [{
 }, {
   name: "Interview Report Generator",
   desc: "Turns AI-scan transcripts into client reports",
-  env: "Beste bank in Nederland internal",
+  env: "Client internal",
   runs: "Per project",
   state: "live"
 }, {
@@ -3291,9 +3297,9 @@ const AGENT_LIB = [{
   runs: "Event-driven",
   state: "sandbox"
 }, {
-  name: "CribCommunity Matcher",
+  name: "Talent Matcher",
   desc: "Matches a brief to top-3 freelancers",
-  env: "Beste bank in Nederland internal",
+  env: "Client internal",
   runs: "On demand",
   state: "sandbox"
 }, {
