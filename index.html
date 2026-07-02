@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="nl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>SARA</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><style>html,body{margin:0;padding:0;height:100%;background:#F3F1EC;font-family:Inter,-apple-system,sans-serif}#root{height:100vh}</style></head><body><div id="root"></div><script>/**
+<!DOCTYPE html><html lang="nl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>IRIS</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><style>html,body{margin:0;padding:0;height:100%;background:#F3F1EC;font-family:Inter,-apple-system,sans-serif}#root{height:100vh}</style></head><body><div id="root"></div><script>/**
  * @license React
  * react.production.min.js
  *
@@ -593,7 +593,7 @@ function TitleBar({ stage, onReset, guide, setGuide }) {
     letterSpacing: 2.5,
     fontSize: 13,
     color: C.text
-  } }, "SARA"), /* @__PURE__ */ React.createElement("span", { style: { width: 1, height: 14, background: C.line } }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11.5, color: C.faint } }, "Cribbr workspace")), /* @__PURE__ */ React.createElement("div", { style: { flex: 1 } }), /* @__PURE__ */ React.createElement("button", { className: "saraBtn", onClick: () => setGuide((g) => !g), style: {
+  } }, "IRIS"), /* @__PURE__ */ React.createElement("span", { style: { width: 1, height: 14, background: C.line } }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11.5, color: C.faint } }, "Cribbr workspace")), /* @__PURE__ */ React.createElement("div", { style: { flex: 1 } }), /* @__PURE__ */ React.createElement("button", { className: "saraBtn", onClick: () => setGuide((g) => !g), style: {
     background: guide ? C.accentSoft : C.panel,
     border: `1px solid ${guide ? C.accent : C.line}`,
     color: guide ? C.greenInk : C.dim,
@@ -690,7 +690,7 @@ function ChatPane({
           if (stage === "idle") onSend();
         }
       },
-      placeholder: mode === "ask" ? "Ask SARA about your day, issues, or team…" : stage === "idle" ? "Describe a problem you keep running into…" : "Describe the next problem…",
+      placeholder: mode === "ask" ? "Ask IRIS about your day, issues, or team…" : stage === "idle" ? "Describe a problem you keep running into…" : "Describe the next problem…",
       rows: 2,
       style: {
         flex: 1,
@@ -760,7 +760,7 @@ function Message({ m }) {
     display: "grid",
     placeItems: "center",
     border: `1px solid ${C.accent}55`
-  } }, "S"), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, color: C.faint, fontFamily: mono } }, "SARA")), /* @__PURE__ */ React.createElement("div", { style: {
+  } }, "I"), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, color: C.faint, fontFamily: mono } }, "IRIS")), /* @__PURE__ */ React.createElement("div", { style: {
     background: me ? C.accent : C.bg,
     color: me ? "#fff" : C.text,
     border: `1px solid ${me ? C.accent : C.line}`,
@@ -988,7 +988,7 @@ function TodayTab({ stage, setTab }) {
     gap: 11,
     alignItems: "flex-start",
     borderLeft: `3px solid ${C.red}`
-  } }, /* @__PURE__ */ React.createElement(Dot, { color: C.red, pulse: true }), /* @__PURE__ */ React.createElement("div", { style: { flex: 1 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, fontWeight: 600, marginBottom: 2 } }, "Company A policy review idle 4 days"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, color: C.dim, lineHeight: 1.5 } }, "Blocking 2 downstream tasks. SARA suggests reassigning the data pull to an agent.")), /* @__PURE__ */ React.createElement("button", { className: "saraBtn", onClick: () => setTab("issues"), style: {
+  } }, /* @__PURE__ */ React.createElement(Dot, { color: C.red, pulse: true }), /* @__PURE__ */ React.createElement("div", { style: { flex: 1 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, fontWeight: 600, marginBottom: 2 } }, "Company A policy review idle 4 days"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, color: C.dim, lineHeight: 1.5 } }, "Blocking 2 downstream tasks. IRIS suggests reassigning the data pull to an agent.")), /* @__PURE__ */ React.createElement("button", { className: "saraBtn", onClick: () => setTab("issues"), style: {
     background: "transparent",
     border: `1px solid ${C.red}66`,
     color: C.red,
@@ -1217,7 +1217,7 @@ function SandboxTab({ stage, execStep, scenario }) {
       padding: "26px 22px",
       textAlign: "center",
       marginBottom: 20
-    } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 30, marginBottom: 10 } }, "🧪"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 15, fontWeight: 700, marginBottom: 6 } }, "No build in progress"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, color: C.dim, lineHeight: 1.55, maxWidth: 420, margin: "0 auto" } }, "Describe a problem in chat. SARA diagnoses the root cause, drafts a plan, runs it on a test case, and you review the output here, all before anything touches production.")), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 9, marginBottom: 11 } }, /* @__PURE__ */ React.createElement("span", { style: { width: 8, height: 8, borderRadius: 99, background: C.amber, flex: "0 0 auto" } }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13.5, fontWeight: 700 } }, "In the sandbox"), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, color: C.faint } }, "· built, not yet live"), /* @__PURE__ */ React.createElement("span", { style: { flex: 1, height: 1, background: C.line } })), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 } }, AGENT_LIB.filter((a) => a.state === "sandbox").map((a) => /* @__PURE__ */ React.createElement(AgentCard, { key: a.name, a: { ...a } }))));
+    } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 30, marginBottom: 10 } }, "🧪"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 15, fontWeight: 700, marginBottom: 6 } }, "No build in progress"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, color: C.dim, lineHeight: 1.55, maxWidth: 420, margin: "0 auto" } }, "Describe a problem in chat. IRIS diagnoses the root cause, drafts a plan, runs it on a test case, and you review the output here, all before anything touches production.")), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 9, marginBottom: 11 } }, /* @__PURE__ */ React.createElement("span", { style: { width: 8, height: 8, borderRadius: 99, background: C.amber, flex: "0 0 auto" } }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13.5, fontWeight: 700 } }, "In the sandbox"), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, color: C.faint } }, "· built, not yet live"), /* @__PURE__ */ React.createElement("span", { style: { flex: 1, height: 1, background: C.line } })), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 } }, AGENT_LIB.filter((a) => a.state === "sandbox").map((a) => /* @__PURE__ */ React.createElement(AgentCard, { key: a.name, a: { ...a } }))));
   }
   if (scenario === "verstrekken") return /* @__PURE__ */ React.createElement(VerstrekkenProcess, { stage, execStep });
   return /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 820, margin: "0 auto" } }, /* @__PURE__ */ React.createElement(ProcessTab, { stage, execStep, inSandbox: true }), ["review", "confirmed", "publish", "published"].includes(stage) && /* @__PURE__ */ React.createElement("div", { style: { marginTop: 26 } }, /* @__PURE__ */ React.createElement(ReviewBlock, { stage })));
@@ -1227,7 +1227,7 @@ function ProcessTab({ stage, execStep }) {
   const showPlan = ["planned", "mapped", "executing", "paused", "review", "confirmed", "publish", "published"].includes(stage);
   const showExec = ["executing", "paused", "review", "confirmed", "publish", "published"].includes(stage);
   if (stage === "idle") {
-    return /* @__PURE__ */ React.createElement(Empty, { title: "No active problem", sub: "Describe a problem in chat. SARA maps the process and finds the root cause before proposing a fix." });
+    return /* @__PURE__ */ React.createElement(Empty, { title: "No active problem", sub: "Describe a problem in chat. IRIS maps the process and finds the root cause before proposing a fix." });
   }
   return /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 820, margin: "0 auto" } }, /* @__PURE__ */ React.createElement(
     ReportBar,
