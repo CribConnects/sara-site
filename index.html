@@ -402,7 +402,7 @@ function SARA() {
     setTimeout(() => setMsgs((m) => [...m, { who: "sara", text }]), delay);
   }
   function pushAgent(text, delay = 0) {
-    setTimeout(() => setMsgs((m) => [...m, { who: "agent", name: "CM3 CONTROLE-AGENT", text }]), delay);
+    setTimeout(() => setMsgs((m) => [...m, { who: "agent", name: "CM CONTROLE-AGENT", text }]), delay);
   }
   function askAgent() {
     setAgentAsked(true);
@@ -880,9 +880,9 @@ function PublishCard({ onPublish, guide, scenario }) {
     ["Human checkpoint", "Fiatteren (vier-ogen)"],
     ["Target", "Copilot Studio \xB7 M365 tenant"]
   ] : scenario === "cm" ? [
-    ["Naam", "CM3 Controle-agent"],
+    ["Naam", "CM Controle-agent"],
     ["Trigger", "Maandelijks \xB7 1e werkdag"],
-    ["Menselijk checkpoint", "Beoordeling afwijkingen"],
+    ["Menselijk checkpoint", "Beoordeling twijfelgevallen"],
     ["Omgeving", "Iris \xB7 eigen werkruimte"]
   ] : [
     ["Name", "NFR Report Builder"],
@@ -1026,39 +1026,53 @@ function VerstrekkenProcess({ stage, execStep }) {
 const CM_CHIP = 'Probeer: "Ik moet de change-management controles weer testen\u2026"';
 const CM_PROBLEM = "Ik moet voor een klant de change-management controles testen (CM1\u2013CM3). Elke keer hetzelfde handwerk: steekproef trekken, bewijs verzamelen, alles vastleggen in het dossier. Dit moet slimmer kunnen.";
 const CM_MSG = {
-  interview: "Voordat ik iets bouw, wil ik het controleraamwerk snappen. Ik lees de checklist: CM1 goedkeuring vooraf, CM2 testen v\xF3\xF3r livegang, CM3 functiescheiding. Ik stel voor te starten met CM3 \u2014 die is het scherpst te toetsen.",
-  captured: "Vastgelegd. CM3 = de bouwer van een wijziging mag hem nooit zelf naar productie brengen. De test: voor een steekproef wijzigingen vaststellen dat bouwer en uitroller verschillende personen zijn, plus checken dat ontwikkelaars geen uitrol-rechten hebben. Zal ik hier een controle-agent van bouwen?",
-  plan: "Hier is de controle als pipeline. De agent trekt de steekproef en toetst; de beoordeling van twijfelgevallen blijft bij jou.",
-  run: "Ik draai de controle op de wijzigingen van afgelopen maand als testcase. Ik stop zodra ik je nodig heb.",
+  interview: "Voordat ik iets bouw, leg ik het volledige controleraamwerk vast. Ik lees de checklist: drie controles (CM1\u2013CM3), samen negen maatregelen met elk een toetsstap \u2014 de volledige kaart staat in de Sandbox.",
+  captured: "Vastgelegd: CM1 goedkeuring vooraf (3 toetsstappen), CM2 testen v\xF3\xF3r livegang (4), CM3 functiescheiding (2). Alle negen toets ik op dezelfde steekproef wijzigingen. Zal ik hier \xE9\xE9n controle-agent van bouwen?",
+  plan: "Hier is de volledige controle als pipeline: \xE9\xE9n steekproef, alle drie de controles. Duidelijke afwijkingen legt de agent zelf vast; twijfelgevallen blijven bij jou.",
+  run: "Ik draai de volledige controle (CM1\u2013CM3) op de wijzigingen van afgelopen maand. Ik stop alleen bij twijfel.",
   resume: "Genoteerd. Ik leg jouw beoordeling vast bij wijziging #4711 \u2014 met de e-mail als onderbouwing \u2014 en maak de controle af.",
-  review: "Klaar: 25 wijzigingen getoetst, 24 akkoord, 1 door jou beoordeeld. Het werkdossier staat in de Sandbox \u2014 kijk of dit is wat je nodig hebt.",
-  confirm: "Bevestigd \u2014 de controle klopt. Zal ik hier een herbruikbare agent van maken? Hij draait deze CM3-controle voortaan elke maand zelf en pingt je alleen bij afwijkingen.",
-  published: "\u201CCM3 Controle-agent\u201D staat live in je Iris-werkruimte. Hij toetst maandelijks alle wijzigingen en pingt je alleen bij een afwijking. Je kunt hem hieronder direct iets vragen."
+  review: "Klaar: 25 wijzigingen door alle negen toetsstappen. CM1 volledig akkoord, bij CM2 \xE9\xE9n duidelijke afwijking (zelf vastgelegd), bij CM3 \xE9\xE9n twijfelgeval (door jou beoordeeld). Het werkdossier staat in de Sandbox.",
+  confirm: "Bevestigd \u2014 de controle klopt. Zal ik hier een herbruikbare agent van maken? Hij draait CM1\u2013CM3 voortaan elke maand zelf en pingt je alleen bij twijfelgevallen.",
+  published: "\u201CCM Controle-agent\u201D staat live in je Iris-werkruimte. Hij toetst maandelijks alle wijzigingen aan het volledige raamwerk en pingt je alleen bij een twijfelgeval. Je kunt hem hieronder direct iets vragen."
 };
 const CM_PAUSE_Q = "Wijziging #4711 is gebouwd \xE9n uitgerold door dezelfde persoon (Jan). Er is wel een e-mail waarin zijn manager vooraf akkoord gaf. Hoe beoordeel je dit?";
 const CM_PAUSE_OPTS = ["Afwijking \u2014 vastleggen", "Akkoord \u2014 e-mail telt"];
 const CM_AGENT_ASK = "Hoe zag afgelopen maand eruit?";
-const CM_AGENT_REPLY = "Afgelopen maand heb ik 31 wijzigingen getoetst: 30 akkoord, 1 afwijking \u2014 wijziging #4832, uitgerold door de bouwer zelf. Die staat voor je klaar ter beoordeling; het werkdossier is bijgewerkt.";
-const CM_CAPTURED = [
-  "CM1 \u2014 Goedkeuring & risico-inschatting v\xF3\xF3r ontwikkeling",
-  "CM2 \u2014 Testen & vastlegging v\xF3\xF3r livegang",
-  "CM3 \u2014 Functiescheiding: bouwer \u2260 uitroller (eerste test)"
+const CM_AGENT_REPLY = "Afgelopen maand: 31 wijzigingen door alle negen toetsstappen. CM1 en CM2 volledig akkoord. CM3: \xE9\xE9n twijfelgeval \u2014 wijziging #4832, uitgerold door de bouwer zelf. Die staat voor je klaar ter beoordeling; het werkdossier is bijgewerkt.";
+const CM_FRAMEWORK = [
+  { id: "CM1", title: "Goedkeuring & risico-inschatting v\xF3\xF3r ontwikkeling", items: [
+    { t: "Wijzigingsverzoeken geregistreerd, met risico/impact-inschatting", test: "steekproef" },
+    { t: "Medewerkers door management gemachtigd om goed te keuren", test: "vaststellen" },
+    { t: "Beoordeling & goedkeuring door gemachtigde medewerkers", test: "steekproef" }
+  ] },
+  { id: "CM2", title: "Getest & goedgekeurd door product owner v\xF3\xF3r livegang", items: [
+    { t: "Product owners benoemd voor het testakkoord", test: "vaststellen" },
+    { t: "Alle wijzigingen getest v\xF3\xF3r uitrol", test: "steekproef" },
+    { t: "Testresultaten & documentatie bewaard", test: "steekproef" },
+    { t: "Testakkoord van de product owner vastgelegd", test: "steekproef" }
+  ] },
+  { id: "CM3", title: "Functiescheiding tussen ontwikkeling en uitrol", items: [
+    { t: "De bouwer van een wijziging is nooit de uitroller", test: "steekproef" },
+    { t: "Ontwikkelaars hebben geen uitrol-rechten in productie", test: "vaststellen" }
+  ] }
 ];
 const CM_PLAN_STEPS = [
   { n: 1, label: "Steekproef trekken: 25 wijzigingen uit TOPdesk", who: "Agent", agent: true },
-  { n: 2, label: "Per wijziging bouwer en uitroller vaststellen", who: "Agent", agent: true },
-  { n: 3, label: "Uitrol-rechten van ontwikkelaars controleren", who: "Agent", agent: true },
-  { n: 4, label: "Twijfelgevallen beoordelen", who: "Consultant", agent: false },
-  { n: 5, label: "Testresultaat vastleggen in het werkdossier", who: "Agent", agent: true }
+  { n: 2, label: "CM1 toetsen \u2014 registratie, risico-inschatting, goedkeuring", who: "Agent", agent: true },
+  { n: 3, label: "CM2 toetsen \u2014 testbewijs, vastlegging, PO-akkoord", who: "Agent", agent: true },
+  { n: 4, label: "CM3 toetsen \u2014 functiescheiding & uitrol-rechten", who: "Agent", agent: true },
+  { n: 5, label: "Twijfelgevallen beoordelen", who: "Consultant", agent: false },
+  { n: 6, label: "Werkdossier opbouwen per controle", who: "Agent", agent: true }
 ];
 const CM_EXEC_STEPS = [
   { label: "25 wijzigingen ophalen uit TOPdesk" },
-  { label: "Bouwer vs. uitroller vergelijken \u2014 24 akkoord" },
-  { label: "Afwijking gevonden: wijziging #4711", pause: true, ask: CM_PAUSE_Q },
-  { label: "Uitrol-rechten ontwikkelaars gecheckt \u2014 geen" },
-  { label: "Werkdossier samenstellen" }
+  { label: "CM1 \u2014 registratie, risico-inschatting & goedkeuring: 25/25" },
+  { label: "CM2 \u2014 testbewijs & PO-akkoord: afwijking #4620 (geen testverslag) vastgelegd" },
+  { label: "CM3 \u2014 bouwer vs. uitroller: twijfelgeval #4711", pause: true, ask: CM_PAUSE_Q },
+  { label: "CM3 \u2014 uitrol-rechten ontwikkelaars: geen" },
+  { label: "Werkdossier per controle samenstellen" }
 ];
-const CM_MAP = ["Steekproef", "Bouwer vs. uitroller", "Rechten-check", "Beoordeling \xB7 mens", "Werkdossier"];
+const CM_MAP = ["Steekproef", "CM1", "CM2", "CM3", "Beoordeling \xB7 mens", "Werkdossier"];
 function CMProcess({ stage, execStep }) {
   const has = (...ss) => ss.includes(stage);
   const showDiag = has("diagnosing", "diagnosed", "planned", "mapped", "executing", "paused", "review", "confirmed", "publish", "published");
@@ -1068,15 +1082,15 @@ function CMProcess({ stage, execStep }) {
   const showReview = has("review", "confirmed", "publish", "published");
   const card = { background: C.panel, border: `1px solid ${C.line}`, borderRadius: 12, padding: "15px 18px", marginBottom: 16 };
   const sec = { fontSize: 11, fontWeight: 700, letterSpacing: ".06em", textTransform: "uppercase", color: C.faint, marginBottom: 11 };
-  return /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 820, margin: "0 auto" } }, /* @__PURE__ */ React.createElement(ReportBar, { title: "Sandbox \xB7 CM3-controle bouwen", meta: "raamwerk \u2192 pipeline \u2192 test \u2192 werkdossier" }), showDiag && (stage === "diagnosing" ? /* @__PURE__ */ React.createElement(Thinking, { label: "Controleraamwerk lezen \xB7 CM1\u2013CM3" }) : /* @__PURE__ */ React.createElement("div", { className: "saraCard", style: card }, /* @__PURE__ */ React.createElement("div", { style: sec }, "Controleraamwerk"), CM_CAPTURED.map((t, i) => /* @__PURE__ */ React.createElement(
+  return /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 820, margin: "0 auto" } }, /* @__PURE__ */ React.createElement(ReportBar, { title: "Sandbox \xB7 Change-management controle bouwen", meta: "raamwerk \u2192 pipeline \u2192 test \u2192 werkdossier" }), showDiag && (stage === "diagnosing" ? /* @__PURE__ */ React.createElement(Thinking, { label: "Controleraamwerk lezen \xB7 CM1\u2013CM3" }) : /* @__PURE__ */ React.createElement("div", { className: "saraCard", style: card }, /* @__PURE__ */ React.createElement("div", { style: sec }, "Controleraamwerk \xB7 3 controles \xB7 9 toetsstappen"), CM_FRAMEWORK.map((c, ci) => /* @__PURE__ */ React.createElement("div", { key: c.id, style: { marginBottom: ci < CM_FRAMEWORK.length - 1 ? 16 : 0 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, marginBottom: 3 } }, /* @__PURE__ */ React.createElement(Chip, { color: C.greenInk, bg: C.greenSoft }, c.id), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13, fontWeight: 700 } }, c.title)), c.items.map((it, i) => /* @__PURE__ */ React.createElement(
     VRow,
     {
       key: i,
-      last: i === CM_CAPTURED.length - 1,
-      left: /* @__PURE__ */ React.createElement("span", { style: { width: 22, height: 22, borderRadius: 99, flex: "0 0 auto", display: "grid", placeItems: "center", fontSize: 11, fontFamily: mono, fontWeight: 700, background: C.greenSoft, color: C.greenInk } }, i + 1)
+      last: i === c.items.length - 1,
+      left: /* @__PURE__ */ React.createElement("span", { style: { fontFamily: mono, fontSize: 10.5, color: C.faint, width: 30, flex: "0 0 auto", paddingTop: 3 } }, c.id.toLowerCase(), ".", i + 1)
     },
-    /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, fontWeight: 600, paddingTop: 2 } }, t)
-  )))), showPlan && /* @__PURE__ */ React.createElement("div", { className: "saraCard", style: card }, /* @__PURE__ */ React.createElement("div", { style: sec }, "Pipeline"), CM_PLAN_STEPS.map((s, i) => /* @__PURE__ */ React.createElement(
+    /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8 } }, /* @__PURE__ */ React.createElement("span", { style: { flex: 1, fontSize: 12.5 } }, it.t), /* @__PURE__ */ React.createElement(Chip, { color: it.test === "steekproef" ? C.amber : C.navy, bg: it.test === "steekproef" ? C.amberSoft : C.navySoft }, it.test))
+  )))))), showPlan && /* @__PURE__ */ React.createElement("div", { className: "saraCard", style: card }, /* @__PURE__ */ React.createElement("div", { style: sec }, "Pipeline"), CM_PLAN_STEPS.map((s, i) => /* @__PURE__ */ React.createElement(
     VRow,
     {
       key: i,
@@ -1098,7 +1112,7 @@ function CMProcess({ stage, execStep }) {
       },
       /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12.5, color: done ? C.text : C.faint } }, s.label), s.pause && /* @__PURE__ */ React.createElement(Chip, { color: C.amber, bg: C.amberSoft }, "beoordeling \xB7 mens"))
     );
-  })), showReview && /* @__PURE__ */ React.createElement("div", { className: "saraCard", style: { ...card, borderLeft: `3px solid ${C.greenInk}` } }, /* @__PURE__ */ React.createElement("div", { style: sec }, "Werkdossier \xB7 CM3-controle"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, lineHeight: 1.6, color: C.text, marginBottom: 12 } }, "De controle liep door alle stappen. Bij ", /* @__PURE__ */ React.createElement("strong", null, "wijziging #4711"), " is gestopt voor menselijke beoordeling; jouw oordeel is met onderbouwing vastgelegd. Geen oordeel is van mens naar machine verplaatst."), [["Steekproef", "25 wijzigingen \xB7 TOPdesk"], ["Akkoord", "24 van 25"], ["Afwijking", "#4711 \xB7 beoordeeld door consultant"], ["Rechten-check", "Geen uitrol-rechten bij ontwikkelaars"], ["Vastlegging", "Onderbouwing per wijziging gelogd"]].map((r, i) => /* @__PURE__ */ React.createElement("div", { key: i, style: { display: "flex", justifyContent: "space-between", fontSize: 12.5, borderBottom: i < 4 ? `1px dashed ${C.line}` : "none", padding: "6px 0" } }, /* @__PURE__ */ React.createElement("span", { style: { color: C.faint } }, r[0]), /* @__PURE__ */ React.createElement("span", { style: { fontFamily: mono, fontSize: 11.5 } }, r[1])))));
+  })), showReview && /* @__PURE__ */ React.createElement("div", { className: "saraCard", style: { ...card, borderLeft: `3px solid ${C.greenInk}` } }, /* @__PURE__ */ React.createElement("div", { style: sec }, "Werkdossier \xB7 CM1\u2013CM3"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, lineHeight: 1.6, color: C.text, marginBottom: 12 } }, "Alle negen toetsstappen zijn doorlopen op \xE9\xE9n steekproef. De duidelijke afwijking (CM2, ", /* @__PURE__ */ React.createElement("strong", null, "#4620"), ") heeft de agent zelf vastgelegd; het twijfelgeval (CM3, ", /* @__PURE__ */ React.createElement("strong", null, "#4711"), ") is gestopt voor jouw beoordeling. Geen oordeel is van mens naar machine verplaatst."), [["Steekproef", "25 wijzigingen \xB7 TOPdesk"], ["CM1 \u2014 goedkeuring vooraf", "25/25 akkoord"], ["CM2 \u2014 testen v\xF3\xF3r livegang", "1 afwijking \xB7 #4620 vastgelegd"], ["CM3 \u2014 functiescheiding", "1 twijfelgeval \xB7 #4711 beoordeeld"], ["Uitrol-rechten", "Geen ontwikkelaars met rechten"], ["Vastlegging", "Onderbouwing per toetsstap gelogd"]].map((r, i) => /* @__PURE__ */ React.createElement("div", { key: i, style: { display: "flex", justifyContent: "space-between", fontSize: 12.5, borderBottom: i < 5 ? `1px dashed ${C.line}` : "none", padding: "6px 0" } }, /* @__PURE__ */ React.createElement("span", { style: { color: C.faint } }, r[0]), /* @__PURE__ */ React.createElement("span", { style: { fontFamily: mono, fontSize: 11.5 } }, r[1])))));
 }
 function TodayTab({ stage, setTab }) {
   return /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 740, margin: "0 auto" } }, /* @__PURE__ */ React.createElement(PulseHero, { setTab }), /* @__PURE__ */ React.createElement(AgentSummaryStrip, { setTab }), /* @__PURE__ */ React.createElement("div", { className: "saraCard", style: {
@@ -1609,7 +1623,7 @@ function DocH({ children }) {
 const AGENT_LIB = [
   { name: "NFR Report Builder", desc: "Assembles the monthly NFR risk report", env: "M365 Copilot", runs: "Monthly", state: "sandbox", fresh: true },
   { name: "Mortgage Process Copilot", desc: "Serves the right process step per dossier; pauses for human sign-off at authorisation.", env: "Copilot Studio \xB7 M365 tenant", runs: "Per dossier", state: "sandbox", vfresh: true },
-  { name: "CM3 Controle-agent", desc: "Toetst maandelijks functiescheiding op alle wijzigingen; pingt alleen bij afwijkingen.", env: "Iris werkruimte", runs: "Maandelijks", state: "sandbox", cmfresh: true },
+  { name: "CM Controle-agent", desc: "Toetst maandelijks alle wijzigingen aan CM1\u2013CM3; pingt alleen bij twijfelgevallen.", env: "Iris werkruimte", runs: "Maandelijks", state: "sandbox", cmfresh: true },
   { name: "Company B Knowledge Copilot", desc: "Answers risk-policy questions for Company B RM", env: "Azure \xB7 client tenant", runs: "On demand", state: "live" },
   { name: "Interview Report Generator", desc: "Turns AI-scan transcripts into client reports", env: "Client internal", runs: "Per project", state: "live" },
   { name: "Cold-email Sequencer", desc: "Drafts outbound sequences from a brief", env: "n8n", runs: "Daily", state: "live" },
@@ -1645,7 +1659,7 @@ function AgentsTab({ stage, scenario }) {
     alignItems: "center",
     gap: 10,
     animation: "saraIn .4s ease"
-  } }, /* @__PURE__ */ React.createElement(Dot, { color: C.green, pulse: true }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12.5, color: C.text } }, /* @__PURE__ */ React.createElement("strong", null, isV ? "Mortgage Process Copilot" : isCM ? "CM3 Controle-agent" : "NFR Report Builder"), " just went live, promoted from the problem you solved today.")), order.map((state) => {
+  } }, /* @__PURE__ */ React.createElement(Dot, { color: C.green, pulse: true }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12.5, color: C.text } }, /* @__PURE__ */ React.createElement("strong", null, isV ? "Mortgage Process Copilot" : isCM ? "CM Controle-agent" : "NFR Report Builder"), " just went live, promoted from the problem you solved today.")), order.map((state) => {
     const items = lib.filter((a) => a.state === state);
     if (!items.length) return null;
     const st = AGENT_STATES[state];
