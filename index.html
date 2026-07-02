@@ -394,6 +394,9 @@ function SARA() {
   const [pauseAnswer, setPauseAnswer] = useState("");
   const [guide, setGuide] = useState(true);
   const [agentAsked, setAgentAsked] = useState(false);
+  const [runOpen, setRunOpen] = useState(false);
+  const [runCount, setRunCount] = useState(0);
+  const runGen = useRef(0);
   const chatRef = useRef(null);
   useEffect(() => {
     if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight;
@@ -408,6 +411,24 @@ function SARA() {
     setAgentAsked(true);
     setMsgs((m) => [...m, { who: "me", text: CM_AGENT_ASK }]);
     pushAgent(CM_AGENT_REPLY, 800);
+  }
+  function openRun() {
+    runGen.current += 1;
+    const gen = runGen.current;
+    setRunOpen(true);
+    setRunCount(0);
+    const step = (i) => {
+      setTimeout(() => {
+        if (runGen.current !== gen) return;
+        setRunCount(i);
+        if (i < CM_RUN_ROWS.length) step(i + 1);
+      }, 380);
+    };
+    step(1);
+  }
+  function closeRun() {
+    runGen.current += 1;
+    setRunOpen(false);
   }
   function askQuestion(override) {
     const q = (override ?? input).trim();
@@ -540,8 +561,10 @@ function SARA() {
     setTab("today");
     setScenario("cm");
     setAgentAsked(false);
+    closeRun();
     setMsgs([{ who: "sara", text: "Welcome! You have 3 tasks due today and one alert worth a look \u2014 the Company A policy review has been idle 4 days and it's blocking two downstream items." }]);
   }
+  if (runOpen) return /* @__PURE__ */ React.createElement(CMRunView, { count: runCount, onClose: closeRun });
   return /* @__PURE__ */ React.createElement("div", { style: {
     fontFamily: sans,
     background: C.bg,
@@ -602,7 +625,8 @@ function SARA() {
       setTab,
       stage,
       execStep,
-      scenario
+      scenario,
+      onOpenRun: openRun
     }
   )));
 }
@@ -894,7 +918,7 @@ const TABS = [
   { id: "issues", label: "Issues" },
   { id: "sandbox", label: "Sandbox" }
 ];
-function WorkPane({ tab, setTab, stage, execStep, scenario }) {
+function WorkPane({ tab, setTab, stage, execStep, scenario, onOpenRun }) {
   return /* @__PURE__ */ React.createElement("div", { style: { flex: 1, display: "flex", flexDirection: "column", minWidth: 0, background: C.bg } }, /* @__PURE__ */ React.createElement("div", { className: "saraScroll", style: {
     height: 42,
     flex: "0 0 auto",
@@ -924,7 +948,7 @@ function WorkPane({ tab, setTab, stage, execStep, scenario }) {
       gap: 7,
       flex: "0 0 auto"
     } }, t.label, live && /* @__PURE__ */ React.createElement(Dot, { color: liveColor, pulse: true }));
-  })), /* @__PURE__ */ React.createElement("div", { className: "saraScroll", style: { flex: 1, overflowY: "auto", padding: 22 } }, tab === "today" && /* @__PURE__ */ React.createElement(TodayTab, { stage, setTab }), tab === "agents" && /* @__PURE__ */ React.createElement(AgentsTab, { stage, scenario }), tab === "team" && /* @__PURE__ */ React.createElement(TeamTab, null), tab === "report" && /* @__PURE__ */ React.createElement(DailyReportTab, { stage }), tab === "issues" && /* @__PURE__ */ React.createElement(IssuesTab, null), tab === "sandbox" && /* @__PURE__ */ React.createElement(SandboxTab, { stage, execStep, scenario })));
+  })), /* @__PURE__ */ React.createElement("div", { className: "saraScroll", style: { flex: 1, overflowY: "auto", padding: 22 } }, tab === "today" && /* @__PURE__ */ React.createElement(TodayTab, { stage, setTab }), tab === "agents" && /* @__PURE__ */ React.createElement(AgentsTab, { stage, scenario, onOpenRun }), tab === "team" && /* @__PURE__ */ React.createElement(TeamTab, null), tab === "report" && /* @__PURE__ */ React.createElement(DailyReportTab, { stage }), tab === "issues" && /* @__PURE__ */ React.createElement(IssuesTab, null), tab === "sandbox" && /* @__PURE__ */ React.createElement(SandboxTab, { stage, execStep, scenario })));
 }
 const V_CHIP = 'Probeer: "Ons Verstrekken-proces verschilt per behandelaar\u2026"';
 const V_PROBLEM = "Ons Verstrekken-proces verschilt per behandelaar. Stappen worden gemist en bij wijzigingen werkt iedereen anders \u2014 ik wil dit standaardiseren.";
@@ -1058,6 +1082,52 @@ const CM_EXEC_STEPS = [
   { label: "Werkdossier per controle samenstellen" }
 ];
 const CM_MAP = ["Aselecte steekproef", "CM1", "CM2", "CM3", "Beoordeling \xB7 auditor", "Werkdossier"];
+const CM_RUN_IDS = [
+  4587,
+  4593,
+  4601,
+  4609,
+  4614,
+  4620,
+  4627,
+  4633,
+  4641,
+  4648,
+  4655,
+  4662,
+  4669,
+  4675,
+  4682,
+  4689,
+  4695,
+  4701,
+  4708,
+  4711,
+  4718,
+  4724,
+  4730,
+  4737,
+  4744
+];
+const CM_RUN_ROWS = CM_RUN_IDS.map((id) => {
+  if (id === 4620) return {
+    id,
+    status: "flag",
+    cm1: "ok",
+    cm2: "fail",
+    cm3: "ok",
+    reason: "CM2 \u2014 geen testverslag gevonden"
+  };
+  if (id === 4711) return {
+    id,
+    status: "review",
+    cm1: "ok",
+    cm2: "ok",
+    cm3: "review",
+    reason: "CM3 \u2014 bouwer = uitroller (Jan); e-mail manager als onderbouwing"
+  };
+  return { id, status: "ok", cm1: "ok", cm2: "ok", cm3: "ok", reason: "" };
+});
 function CMProcess({ stage, execStep }) {
   const has = (...ss) => ss.includes(stage);
   const showDiag = has("diagnosing", "diagnosed", "planned", "mapped", "executing", "paused", "review", "confirmed", "publish", "published");
@@ -1107,6 +1177,110 @@ function CMProcess({ stage, execStep }) {
       /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12.5, color: done ? C.text : C.faint } }, s.label), s.pause && /* @__PURE__ */ React.createElement(Chip, { color: C.amber, bg: C.amberSoft }, "beoordeling \xB7 mens"))
     );
   })), showReview && /* @__PURE__ */ React.createElement("div", { className: "saraCard", style: { ...card, borderLeft: `3px solid ${C.greenInk}` } }, /* @__PURE__ */ React.createElement("div", { style: sec }, "Werkdossier \xB7 CM1\u2013CM3"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, lineHeight: 1.6, color: C.text, marginBottom: 12 } }, "Alle negen toetsstappen zijn doorlopen op \xE9\xE9n steekproef. De duidelijke afwijking (CM2, ", /* @__PURE__ */ React.createElement("strong", null, "#4620"), ") heeft de agent zelf vastgelegd; het twijfelgeval (CM3, ", /* @__PURE__ */ React.createElement("strong", null, "#4711"), ") is gestopt voor jouw beoordeling. Geen oordeel is van mens naar machine verplaatst."), [["Aselecte steekproef", "25 wijzigingen \xB7 ServiceNow"], ["CM1 \u2014 goedkeuring vooraf", "25/25 akkoord"], ["CM2 \u2014 testen v\xF3\xF3r livegang", "1 afwijking \xB7 #4620 vastgelegd"], ["CM3 \u2014 functiescheiding", "1 twijfelgeval \xB7 #4711 beoordeeld"], ["Uitrol-rechten", "Geen ontwikkelaars met rechten"], ["Vastlegging", "Onderbouwing per toetsstap gelogd"]].map((r, i) => /* @__PURE__ */ React.createElement("div", { key: i, style: { display: "flex", justifyContent: "space-between", fontSize: 12.5, borderBottom: i < 5 ? `1px dashed ${C.line}` : "none", padding: "6px 0" } }, /* @__PURE__ */ React.createElement("span", { style: { color: C.faint } }, r[0]), /* @__PURE__ */ React.createElement("span", { style: { fontFamily: mono, fontSize: 11.5 } }, r[1])))));
+}
+function RunMini({ label, v }) {
+  const c = v === "ok" ? C.greenInk : v === "fail" ? C.red : C.amber;
+  const bg = v === "ok" ? C.greenSoft : v === "fail" ? C.redSoft : C.amberSoft;
+  const mark = v === "ok" ? "\u2713" : v === "fail" ? "\u2715" : "?";
+  return /* @__PURE__ */ React.createElement("span", { title: label, style: {
+    width: 20,
+    height: 20,
+    borderRadius: 6,
+    background: bg,
+    color: c,
+    display: "grid",
+    placeItems: "center",
+    fontSize: 10.5,
+    fontWeight: 700,
+    flex: "0 0 auto"
+  } }, mark);
+}
+function CMRunView({ count, onClose }) {
+  const rows = CM_RUN_ROWS;
+  const total = rows.length;
+  const shown = rows.slice(0, count);
+  const done = count >= total;
+  const okCount = shown.filter((r) => r.status === "ok").length;
+  const flagCount = shown.filter((r) => r.status === "flag").length;
+  const reviewCount = shown.filter((r) => r.status === "review").length;
+  return /* @__PURE__ */ React.createElement("div", { style: {
+    position: "fixed",
+    inset: 0,
+    zIndex: 50,
+    background: C.bg,
+    display: "flex",
+    flexDirection: "column",
+    fontFamily: sans,
+    color: C.text
+  } }, /* @__PURE__ */ React.createElement("div", { style: {
+    flex: "0 0 auto",
+    padding: "14px 24px",
+    borderBottom: `1px solid ${C.line}`,
+    background: C.panel,
+    display: "flex",
+    alignItems: "center",
+    gap: 14
+  } }, /* @__PURE__ */ React.createElement("button", { className: "saraBtn", onClick: onClose, style: {
+    background: "transparent",
+    border: `1px solid ${C.line}`,
+    borderRadius: 8,
+    padding: "7px 12px",
+    fontSize: 12.5,
+    color: C.dim,
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    gap: 6
+  } }, "\u2190 Terug naar Iris"), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 14, fontWeight: 700 } }, "CM Test-agent \xB7 Live run"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, color: C.faint } }, "Aselecte steekproef \xB7 25 wijzigingen \xB7 ServiceNow \xB7 getoetst aan CM1\u2013CM3"))), /* @__PURE__ */ React.createElement("div", { style: { flex: "0 0 auto", padding: "18px 24px 6px", maxWidth: 760, margin: "0 auto", width: "100%" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 8 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 20, fontWeight: 700, fontFamily: mono } }, done ? `${total}/${total} gecontroleerd` : `Wijziging ${count}/${total} gecontroleerd`), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12, color: C.faint } }, okCount, " akkoord \xB7 ", flagCount, " afwijking \xB7 ", reviewCount, " twijfelgeval")), /* @__PURE__ */ React.createElement("div", { style: { height: 8, borderRadius: 99, background: C.panel2, overflow: "hidden", border: `1px solid ${C.line}` } }, /* @__PURE__ */ React.createElement("div", { style: {
+    height: "100%",
+    borderRadius: 99,
+    background: C.accent,
+    width: `${count / total * 100}%`,
+    transition: "width .38s linear"
+  } }))), /* @__PURE__ */ React.createElement("div", { className: "saraScroll", style: { flex: 1, overflowY: "auto", padding: "10px 24px 28px" } }, /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 760, margin: "0 auto" } }, /* @__PURE__ */ React.createElement("div", { style: {
+    display: "grid",
+    gridTemplateColumns: "70px 24px 24px 24px 1fr 100px",
+    gap: 10,
+    fontSize: 10.5,
+    fontWeight: 700,
+    color: C.faint,
+    textTransform: "uppercase",
+    letterSpacing: ".04em",
+    padding: "0 12px 8px"
+  } }, /* @__PURE__ */ React.createElement("span", null, "Wijziging"), /* @__PURE__ */ React.createElement("span", null, "CM1"), /* @__PURE__ */ React.createElement("span", null, "CM2"), /* @__PURE__ */ React.createElement("span", null, "CM3"), /* @__PURE__ */ React.createElement("span", null, "Bevinding"), /* @__PURE__ */ React.createElement("span", { style: { textAlign: "right" } }, "Status")), shown.map((r) => {
+    const statusColor = r.status === "ok" ? C.greenInk : r.status === "flag" ? C.red : C.amber;
+    const statusBg = r.status === "ok" ? C.greenSoft : r.status === "flag" ? C.redSoft : C.amberSoft;
+    const statusLabel = r.status === "ok" ? "Akkoord" : r.status === "flag" ? "Afwijking" : "Twijfelgeval";
+    return /* @__PURE__ */ React.createElement("div", { key: r.id, className: "saraCard", style: {
+      display: "grid",
+      gridTemplateColumns: "70px 24px 24px 24px 1fr 100px",
+      gap: 10,
+      alignItems: "center",
+      background: C.panel,
+      border: `1px solid ${r.status === "ok" ? C.line : statusColor + "44"}`,
+      borderRadius: 9,
+      padding: "9px 12px",
+      marginBottom: 6,
+      animation: "saraIn .28s ease"
+    } }, /* @__PURE__ */ React.createElement("span", { style: { fontFamily: mono, fontSize: 12, color: C.dim } }, "#", r.id), /* @__PURE__ */ React.createElement(RunMini, { label: "CM1", v: r.cm1 }), /* @__PURE__ */ React.createElement(RunMini, { label: "CM2", v: r.cm2 }), /* @__PURE__ */ React.createElement(RunMini, { label: "CM3", v: r.cm3 }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11.5, color: r.reason ? C.text : C.faint } }, r.reason || "Alle toetsstappen akkoord"), /* @__PURE__ */ React.createElement(Chip, { color: statusColor, bg: statusBg }, statusLabel));
+  }))), done && /* @__PURE__ */ React.createElement("div", { style: {
+    flex: "0 0 auto",
+    padding: "14px 24px",
+    borderTop: `1px solid ${C.line}`,
+    background: C.panel,
+    display: "flex",
+    justifyContent: "center",
+    gap: 10
+  } }, /* @__PURE__ */ React.createElement("button", { className: "saraBtn", onClick: onClose, style: {
+    background: C.accent,
+    color: "#fff",
+    border: "none",
+    borderRadius: 8,
+    padding: "10px 20px",
+    fontSize: 13,
+    fontWeight: 600,
+    cursor: "pointer"
+  } }, "25/25 gecontroleerd \u2014 terug naar Iris")));
 }
 function TodayTab({ stage, setTab }) {
   return /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 740, margin: "0 auto" } }, /* @__PURE__ */ React.createElement(PulseHero, { setTab }), /* @__PURE__ */ React.createElement(AgentSummaryStrip, { setTab }), /* @__PURE__ */ React.createElement("div", { className: "saraCard", style: {
@@ -1629,7 +1803,7 @@ const AGENT_STATES = {
   sandbox: { label: "Sandbox", c: C.amber, bg: C.amberSoft, dot: C.amber, blurb: "Built, testing before publish" },
   off: { label: "Off", c: C.faint, bg: C.panel2, dot: C.faint, blurb: "Paused" }
 };
-function AgentsTab({ stage, scenario }) {
+function AgentsTab({ stage, scenario, onOpenRun }) {
   const published = stage === "published";
   const isV = scenario === "verstrekken";
   const isCM = scenario === "cm";
@@ -1655,19 +1829,27 @@ function AgentsTab({ stage, scenario }) {
     const items = lib.filter((a) => a.state === state);
     if (!items.length) return null;
     const st = AGENT_STATES[state];
-    return /* @__PURE__ */ React.createElement("div", { key: state, style: { marginBottom: 22 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 9, marginBottom: 11 } }, /* @__PURE__ */ React.createElement("span", { style: { width: 8, height: 8, borderRadius: 99, background: st.dot, flex: "0 0 auto", color: st.dot, animation: state === "live" ? "saraPulse 1.8s infinite" : "none" } }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13.5, fontWeight: 700, color: C.text } }, st.label), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, color: C.faint } }, "\xB7 ", st.blurb), /* @__PURE__ */ React.createElement("span", { style: { flex: 1, height: 1, background: C.line } }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, fontFamily: mono, color: C.faint } }, items.length)), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 } }, items.map((a) => /* @__PURE__ */ React.createElement(AgentCard, { key: a.name, a }))));
+    return /* @__PURE__ */ React.createElement("div", { key: state, style: { marginBottom: 22 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 9, marginBottom: 11 } }, /* @__PURE__ */ React.createElement("span", { style: { width: 8, height: 8, borderRadius: 99, background: st.dot, flex: "0 0 auto", color: st.dot, animation: state === "live" ? "saraPulse 1.8s infinite" : "none" } }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13.5, fontWeight: 700, color: C.text } }, st.label), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, color: C.faint } }, "\xB7 ", st.blurb), /* @__PURE__ */ React.createElement("span", { style: { flex: 1, height: 1, background: C.line } }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, fontFamily: mono, color: C.faint } }, items.length)), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 } }, items.map((a) => /* @__PURE__ */ React.createElement(
+      AgentCard,
+      {
+        key: a.name,
+        a,
+        onClick: a.cmfresh && a.state === "live" ? onOpenRun : void 0
+      }
+    ))));
   }));
 }
-function AgentCard({ a }) {
+function AgentCard({ a, onClick }) {
   const st = AGENT_STATES[a.state];
   const dim = a.state === "off";
-  return /* @__PURE__ */ React.createElement("div", { className: "saraCard", style: {
+  return /* @__PURE__ */ React.createElement("div", { className: "saraCard", onClick, style: {
     background: C.panel,
     border: `1px solid ${a.fresh && a.state === "live" ? C.green + "66" : C.line}`,
     borderRadius: 11,
     padding: 14,
     opacity: dim ? 0.72 : 1,
-    position: "relative"
+    position: "relative",
+    cursor: onClick ? "pointer" : "default"
   } }, a.state === "live" && /* @__PURE__ */ React.createElement("span", { style: { position: "absolute", top: 13, right: 13, width: 7, height: 7, borderRadius: 99, background: C.green, color: C.green, animation: "saraPulse 1.8s infinite" } }), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 9 } }, /* @__PURE__ */ React.createElement("span", { style: {
     width: 34,
     height: 34,
@@ -1678,7 +1860,17 @@ function AgentCard({ a }) {
     fontSize: 15,
     flex: "0 0 auto",
     filter: dim ? "grayscale(.6)" : "none"
-  } }, "\u{1F916}"), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, a.name), /* @__PURE__ */ React.createElement(Chip, { color: st.c, bg: st.bg }, st.label.toLowerCase()))), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, color: C.dim, lineHeight: 1.5, marginBottom: 10, minHeight: 32 } }, a.desc), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 14, fontSize: 10.5, color: C.faint, fontFamily: mono } }, /* @__PURE__ */ React.createElement("span", null, a.env), /* @__PURE__ */ React.createElement("span", null, "\xB7"), /* @__PURE__ */ React.createElement("span", null, a.runs)));
+  } }, "\u{1F916}"), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, a.name), /* @__PURE__ */ React.createElement(Chip, { color: st.c, bg: st.bg }, st.label.toLowerCase()))), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, color: C.dim, lineHeight: 1.5, marginBottom: 10, minHeight: 32 } }, a.desc), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 14, fontSize: 10.5, color: C.faint, fontFamily: mono } }, /* @__PURE__ */ React.createElement("span", null, a.env), /* @__PURE__ */ React.createElement("span", null, "\xB7"), /* @__PURE__ */ React.createElement("span", null, a.runs)), onClick && /* @__PURE__ */ React.createElement("div", { style: {
+    marginTop: 10,
+    paddingTop: 9,
+    borderTop: `1px solid ${C.line}`,
+    fontSize: 11,
+    fontWeight: 600,
+    color: C.accent,
+    display: "flex",
+    alignItems: "center",
+    gap: 5
+  } }, "Bekijk live run ", /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13 } }, "\u2192")));
 }
 function DailyReportTab({ stage }) {
   const solved = ["confirmed", "publish", "published"].includes(stage);
